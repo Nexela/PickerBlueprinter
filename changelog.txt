@@ -3,3 +3,12 @@ Version: 1.0.0
 Date: ??????
   Features:
     - Seperated into its own mod.
+    - Add a new blank blueprint to a blueprint book with "+".
+    - Remove all empty blueprints from a blueprint book with "-".
+    - Mirror blueprints with "ALT R" or use the blueprint tools gui.
+    - Upgrade entities in blueprints with the blueprint tools gui.
+    - Create a quick ghost BP using an empty blueprint and the blueprint tools gui.
+    - Snap large blueprints around using the numpad.
+    - Make a ghost bp of any blueprintable entity including recipes/modules with "CTRL Q".
+    - Creates an instant ghost BP if you run out of items while building.
+    - Adds a blueprint updater with a bp in hand "SHIFT U" and the new BP will keep the same icon and name. With optional version increment.
