@@ -5,6 +5,7 @@ Player.register_events(true)
 Force.register_events(true)
 
 require('scripts/blueprinter')
+require('scripts/deconstruction')
 require('scripts/bpmirror')
 require('scripts/bpupdater')
 require('scripts/bpsnap')

@@ -5,6 +5,7 @@ local Gui = require('__stdlib__/stdlib/event/gui')
 local Position = require('__stdlib__/stdlib/area/position')
 local Inventory = require('__stdlib__/stdlib/entity/inventory')
 local table = require('__stdlib__/stdlib/utils/table')
+local interface = require('__stdlib__/stdlib/scripts/interface')
 
 local swap_sides = {
     ['left'] = 'right',
@@ -14,6 +15,10 @@ local swap_sides = {
     ['input'] = 'output',
     ['output'] = 'input'
 }
+
+function interface.on_blueprint_mirrored()
+    return Event.get_event_name('on_blueprint_mirrored')
+end
 
 local function get_mirrored_blueprint(blueprint)
     local curves, others, stops, signals, tanks = 9, 0, 4, 4, 2
@@ -117,4 +122,4 @@ local function mirror_blueprint(event)
 end
 Gui.on_click('picker_bp_tools_mirror', mirror_blueprint)
 Event.register('picker-mirror-blueprint', mirror_blueprint)
-Event.register(Event.generate_event_name('mirror_blueprint'), mirror_blueprint)
+Event.register(Event.generate_event_name('on_blueprint_mirrored'), mirror_blueprint)

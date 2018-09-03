@@ -98,23 +98,22 @@ if updater then
         show_in_library = false
     }
 end
-
-Data('blueprint', 'blueprint'):copy('picker-dummy-blueprint'):set_fields {
-    draw_label_for_cursor_render = true,
-    show_in_library = false,
-    flags = {'hidden'},
-    order = 'c[automated-construction]-a[blueprint]-no-picker'
+Data {
+    type = "custom-input",
+    name = "picker-summon-empty-blueprint",
+    key_sequence = 'KP_PLUS',
+    --linked_game_control = 'larger-terrain-building-area',
+    order = "a"
 }
-
 Data {
     type = 'custom-input',
     name = 'picker-add-empty-bp-to-book',
-    key_sequence = 'PAD +',
+    key_sequence = 'KP_PLUS',
     linked_game_control = 'larger-terrain-building-area'
 }
 Data {
     type = 'custom-input',
     name = 'picker-clean-empty-bps-in-book',
-    key_sequence = 'PAD -',
+    key_sequence = 'KP_MINUS',
     linked_game_control = 'smaller-terrain-building-area'
 }

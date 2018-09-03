@@ -12,3 +12,4 @@ Date: ??????
     - Make a ghost bp of any blueprintable entity including recipes/modules with "CTRL Q".
     - Creates an instant ghost BP if you run out of items while building.
     - Adds a blueprint updater with a bp in hand "SHIFT U" and the new BP will keep the same icon and name. With optional version increment.
+    - Adds deconstruction planner hot keys for getting a planner, setting to tree mode, adding selected entities, toggling modes.

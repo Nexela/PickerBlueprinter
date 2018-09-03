@@ -67,7 +67,7 @@ Event.register(defines.events.on_player_cursor_stack_changed, show_bp_tools)
 -- Blueprint when running out of items
 local function blueprint_single_entity(player, pdata, entity, target_name, area)
     if area:size() > 0 then
-        local bp = lib.get_planner(player, 'picker-dummy-blueprint', 'Pipette Blueprint')
+        local bp = lib.get_planner(player, 'picker-blueprint-tool', 'Pipette Blueprint')
         if bp then
             bp.clear_blueprint()
             bp.label = 'Pipette Blueprint'
@@ -131,7 +131,7 @@ local function make_simple_blueprint(event)
     local player, pdata = Player.get(event.player_index)
     if player.controller_type ~= defines.controllers.ghost and player.mod_settings['picker-simple-blueprint'].value then
         if player.selected and not (player.selected.type == 'resource' or player.selected.has_flag('not-blueprintable')) then
-            if not (player.cursor_stack.valid_for_read and global.planners[player.cursor_stack.name]) then
+            if not (player.cursor_stack.valid_for_read) then
                 local entity = player.selected
                 if player.clean_cursor() then
                     if entity.force == player.force and Entity.damaged(entity) and lib.get_planner(player, 'repair-tool') then
@@ -200,7 +200,7 @@ local function create_quick_pick_blueprint(event)
                     position = Position.translate({x, y}, defines.direction.northeast, item.place_result.building_grid_bit_shift)
                 }
             }
-            lib.get_planner(player, 'picker-dummy-blueprint', 'Pipette Blueprint')
+            lib.get_planner(player, 'picker-blueprint-tool', 'Pipette Blueprint')
             local ok =
                 pcall(
                 function()
@@ -222,8 +222,8 @@ local function add_empty_bp_to_book(event)
     if stack.valid_for_read and stack.is_blueprint_book then
         local inv = stack.get_inventory(defines.inventory.item_main)
         --insert a dummy print so we have an easy way to find the idx
-        if inv and inv.insert('picker-dummy-blueprint') then
-            local slot, idx = inv.find_item_stack('picker-dummy-blueprint')
+        if inv and inv.insert('picker-blueprint-tool') then
+            local slot, idx = inv.find_item_stack('picker-blueprint-tool')
             if slot and idx and slot.set_stack('blueprint') then
                 stack.active_index = idx
                 -- Cycling blueprints in books raises cursor changed event, lets emulate that.
@@ -258,3 +258,13 @@ local function clean_empty_bps_in_book(event)
     end
 end
 Event.register('picker-clean-empty-bps-in-book', clean_empty_bps_in_book) --))
+
+local function summon_blueprint(event)
+    local player = game.players[event.player_index]
+    local stack = player.cursor_stack
+    if not stack.valid_for_read or stack.is_deconstruction_item or (stack.is_blueprint and stack.is_blueprint_setup()) then
+        local item = lib.find_item_in_inventories('blueprint', lib.get_inventories(player), {is_blueprint_not_setup = true}) or 'blueprint'
+        return lib.set_or_swap_item(player, stack, item)
+    end
+end
+Event.register('picker-summon-empty-blueprint', summon_blueprint)
