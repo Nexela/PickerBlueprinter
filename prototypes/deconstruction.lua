@@ -2,13 +2,13 @@ data:extend {
     {
         type = 'custom-input',
         name = 'picker-summon-deconstruction-planner',
-        key_sequence = 'KP_MINUS',
+        key_sequence = 'CONTROL + KP_MINUS',
         order = 'b'
     },
     {
         type = 'custom-input',
         name = 'picker-summon-trees-deconstruction-planner',
-        key_sequence = 'SHIFT + KP_MINUS',
+        key_sequence = 'CONTROL + SHIFT + KP_MINUS',
         order = 'c'
     },
 
