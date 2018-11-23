@@ -25,16 +25,18 @@ local function get_mirrored_blueprint(blueprint)
 
     local smartTrains = remote.interfaces.st and remote.interfaces.st.getProxyPositions
     local smartStops = {['smart-train-stop-proxy'] = {}, ['smart-train-stop-proxy-cargo'] = {}}
-    local smartSignal = {}
-    local smartCargo = {}
+    local smartSignal, smartCargo = {}, {}
+
     local proxyKeys = function(trainStop)
         local proxies = remote.call('st', 'getProxyPositions', trainStop)
         local signal = proxies.signalProxy.x .. ':' .. proxies.signalProxy.y
         local cargo = proxies.cargo.x .. ':' .. proxies.cargo.y
         return {signal = signal, cargo = cargo}
     end
+
     local entities = blueprint.get_blueprint_entities()
     local tiles = blueprint.get_blueprint_tiles()
+
     if entities then
         for i, ent in pairs(entities) do
             local entType = game.entity_prototypes[ent.name] and game.entity_prototypes[ent.name].type
@@ -54,18 +56,26 @@ local function get_mirrored_blueprint(blueprint)
                 else
                     ent.direction = (stops - ent.direction) % 8
                 end
+            elseif entType == 'lamp' then
+                if ent.name == 'smart-train-stop-proxy' then
+                    ent.direction = 0
+                    table.insert(smartSignal, {entity = {name = ent.name, position = Position.copy(ent.position)}, i = i})
+                end
+            elseif entType == 'constant-combinator' then
+                if ent.name == 'smart-train-stop-proxy-cargo' then
+                    ent.direction = 0
+                    table.insert(smartCargo, {entity = {name = ent.name, position = Position.copy(ent.position)}, i = i})
+                end
             elseif entType == 'storage-tank' then
                 ent.direction = (tanks + ent.direction) % 8
-            elseif entType == 'lamp' and ent.name == 'smart-train-stop-proxy' then
-                ent.direction = 0
-                table.insert(smartSignal, {entity = {name = ent.name, position = Position.copy(ent.position)}, i = i})
-            elseif entType == 'constant-combinator' and ent.name == 'smart-train-stop-proxy-cargo' then
-                ent.direction = 0
-                table.insert(smartCargo, {entity = {name = ent.name, position = Position.copy(ent.position)}, i = i})
             elseif entType == 'splitter' then
                 ent.direction = (others - ent.direction) % 8
                 ent.input_priority = ent.input_priority and swap_sides[ent.input_priority]
                 ent.output_priority = ent.output_priority and swap_sides[ent.output_priority]
+            elseif entType == 'pipe-to-ground'  then
+                if  ent.name:find('%-clamped%-l$') then
+                    ent.direction = (others - ent.direction + 2) % 8
+                end
             else
                 ent.direction = (others - ent.direction) % 8
             end
@@ -80,6 +90,7 @@ local function get_mirrored_blueprint(blueprint)
             end
         end
     end
+
     for _, data in pairs(smartSignal) do
         local proxy = data.entity
         local stop = smartStops[proxy.name][proxy.position.x .. ':' .. proxy.position.y]
@@ -96,6 +107,7 @@ local function get_mirrored_blueprint(blueprint)
             entities[data.i].position = newPositions.cargo
         end
     end
+
     if tiles then
         for _, tile in pairs(tiles) do
             tile.position.x = -1 * tile.position.x
