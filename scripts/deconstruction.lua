@@ -7,21 +7,21 @@ local function summon_deconstruction_planner(event)
     local stack = player.cursor_stack
     local tree_planner = event.input_name == 'picker-summon-trees-deconstruction-planner'
     if not stack.valid_for_read then
-        local item = lib.find_item_in_inventories('deconstruction-planner', lib.get_inventories(player), {is_deconstruction_not_setup = true}) or 'deconstruction-planner'
+        local item = lib.find_item_in_inventory('deconstruction-planner', player.get_main_inventory(), {is_deconstruction_not_setup = true}) or 'deconstruction-planner'
         if not lib.set_or_swap_item(player, stack, item) then
             return
         end
         stack.trees_and_rocks_only = tree_planner
     elseif stack.is_deconstruction_item then
         if (#stack.entity_filters > 0 or #stack.tile_filters > 0) then
-            local item = lib.find_item_in_inventories('deconstruction-planner', lib.get_inventories(player), {is_deconstruction_not_setup = true})
+            local item = lib.find_item_in_inventory('deconstruction-planner', player.get_main_inventory(), {is_deconstruction_not_setup = true})
             if not lib.set_or_swap_item(player, stack, item or 'deconstruction-planner') then
                 return
             end
         end
         stack.trees_and_rocks_only = tree_planner
     elseif stack.is_selection_tool or (stack.is_blueprint and not stack.is_blueprint_setup()) then
-        local item = lib.find_item_in_inventories('deconstruction-planner', lib.get_inventories(player), {is_deconstruction_not_setup = true})
+        local item = lib.find_item_in_inventory('deconstruction-planner', player.get_main_inventory(), {is_deconstruction_not_setup = true})
         if not lib.set_or_swap_item(player, stack, item or 'deconstruction-planner') then
             return
         end

@@ -263,7 +263,7 @@ local function summon_blueprint(event)
     local player = game.players[event.player_index]
     local stack = player.cursor_stack
     if not stack.valid_for_read or stack.is_deconstruction_item or (stack.is_blueprint and stack.is_blueprint_setup()) then
-        local item = lib.find_item_in_inventories('blueprint', lib.get_inventories(player), {is_blueprint_not_setup = true}) or 'blueprint'
+        local item = lib.find_item_in_inventory('blueprint', player.get_main_inventory(), {is_blueprint_not_setup = true}) or 'blueprint'
         return lib.set_or_swap_item(player, stack, item)
     end
 end
