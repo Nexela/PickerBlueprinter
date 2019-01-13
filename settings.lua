@@ -24,13 +24,6 @@ data:extend {
         order = 'picker-a[blueprint]-a'
     },
     {
-        type = 'bool-setting',
-        name = 'picker-blueprint-last',
-        setting_type = 'runtime-per-user',
-        default_value = false,
-        order = 'picker-g[last-put]-a'
-    },
-    {
         type = 'string-setting',
         name = 'picker-bp-updater-version-increment',
         setting_type = 'runtime-per-user',

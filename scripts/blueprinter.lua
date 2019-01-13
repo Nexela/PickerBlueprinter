@@ -64,7 +64,6 @@ local function show_bp_tools(event)
 end
 Event.register(defines.events.on_player_cursor_stack_changed, show_bp_tools)
 
--- Blueprint when running out of items
 local function blueprint_single_entity(player, pdata, entity, target_name, area)
     if area:size() > 0 then
         local bp = lib.get_planner(player, 'picker-blueprint-tool', 'Pipette Blueprint')
@@ -103,28 +102,6 @@ local function blueprint_single_entity(player, pdata, entity, target_name, area)
         end
     end
 end
-
---Creates a blueprint item in your hand of the last thing you built if you run out of items.
-local function last_built(event)
-    local player, pdata = Player.get(event.player_index)
-    if not player.cursor_stack.valid_for_read and player.mod_settings['picker-blueprint-last'].value and pdata.last_put then
-        local entity = event.created_entity
-        local area = Area(entity.bounding_box)
-        blueprint_single_entity(player, pdata, entity, pdata.last_put, area)
-    end
-end
-Event.register(defines.events.on_built_entity, last_built)
-
-local function last_item(event)
-    local player, pdata = Player.get(event.player_index)
-    if player.cursor_stack and player.cursor_stack.valid_for_read then
-        local stack = player.cursor_stack
-        if stack.count == 1 and stack.prototype.place_result and not stack.prototype.place_result.has_flag('not-blueprintable') and player.get_item_count(stack.name) == 1 then
-            pdata.last_put = stack.prototype.place_result.name
-        end
-    end
-end
-Event.register(defines.events.on_put_item, last_item)
 
 -- Make Simple Blueprint --Makes a simple blueprint of the selected entity, including recipes/modules
 local function make_simple_blueprint(event)
