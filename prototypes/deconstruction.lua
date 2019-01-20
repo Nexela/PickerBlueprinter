@@ -16,7 +16,7 @@ data:extend {
     {
         type = 'custom-input',
         name = 'picker-pick-deconstruction-filter',
-        key_sequence = 'SHIFT + Q',
+        key_sequence = 'CONTROL + Q',
         order = 'g'
     },
     {

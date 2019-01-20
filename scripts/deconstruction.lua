@@ -65,11 +65,14 @@ local function pick_deconstruction_filter(event)
     local stack = player.cursor_stack
     local selected = player.selected
     if selected and stack.valid_for_read and stack.name == 'deconstruction-planner' then
+        -- TODO: Toggle trees-and-rocks
         if selected.type ~= 'resource' and selected.type ~= 'tree' and selected.type ~= 'simple-entity' then
             local first_free_slot
             for i = 1, stack.entity_filter_count, 1 do
                 local filter = stack.get_entity_filter(i)
                 if selected.name == filter then
+                    -- TODO: localize
+                    player.print('Removing filter '.. selected.name)
                     stack.set_entity_filter(i, nil)
                     return
                 end
@@ -80,6 +83,8 @@ local function pick_deconstruction_filter(event)
             end
 
             if first_free_slot then
+                -- TODO: localize
+                player.print('Adding filter ' .. selected.name)
                 stack.set_entity_filter(first_free_slot, selected)
             else
                 player.print({'deconstructor.no-empty-slots'})
