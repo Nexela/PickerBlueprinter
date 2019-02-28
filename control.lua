@@ -1,3 +1,4 @@
+require('__stdlib__/stdlib/event/event').protected_mode = true
 local Player = require('__stdlib__/stdlib/event/player')
 local Force = require('__stdlib__/stdlib/event/force')
 
