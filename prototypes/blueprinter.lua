@@ -82,7 +82,7 @@ if updater then
     Data {
         type = 'selection-tool',
         name = 'picker-bp-updater',
-        icon = '__PickerExtended__/graphics/cloned-blueprint.png',
+        icon = '__PickerBlueprinter__/graphics/cloned-blueprint.png',
         icon_size = 32,
         flags = {'hidden'},
         subgroup = 'tool',
