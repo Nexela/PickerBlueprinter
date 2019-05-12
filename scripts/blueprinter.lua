@@ -151,7 +151,7 @@ local function update_blueprint(event)
 end
 Gui.on_click('picker_bp_tools_update', update_blueprint)
 
---Quick Pick Blueprint -- Makes a quick blueprint from the entity selector gui TODO not needed in .17?
+--! Quick Pick Blueprint -- Makes a quick blueprint from the entity selector gui TODO not needed in .17?
 local function create_quick_pick_blueprint(event)
     local player = game.players[event.player_index]
     local stack = Inventory.get_blueprint(player.cursor_stack)
@@ -165,7 +165,7 @@ local function create_quick_pick_blueprint(event)
         if item then
             local _, w, h
             if item.place_result.collision_box then
-                _, w, h = Area.size(Area.round_to_integer(item.place_result.collision_box))
+                _, w, h = Area.size(Area.round(item.place_result.collision_box))
             end
             local x = w and w % 2 == 0 and -0.5 or 0
             local y = h and h % 2 == 0 and -0.5 or 0
