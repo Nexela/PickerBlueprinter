@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: ??????
+  Features:
+    -  Instantly mark selected items for deconstruction with DEL key.
+  Changes:
+    - Removed summon blueprint and deconstruction item hotkeys.
+    - Removed blueprint upgrader and entity picker.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.2
 Date: ??????
   Bugfixes:

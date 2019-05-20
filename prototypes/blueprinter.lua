@@ -99,13 +99,6 @@ if updater then
     }
 end
 Data {
-    type = "custom-input",
-    name = "picker-summon-empty-blueprint",
-    key_sequence = 'CONTROL + KP_PLUS',
-    --linked_game_control = 'larger-terrain-building-area',
-    order = "a"
-}
-Data {
     type = 'custom-input',
     name = 'picker-add-empty-bp-to-book',
     key_sequence = 'KP_PLUS',

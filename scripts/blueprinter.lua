@@ -4,67 +4,13 @@
 --Mirroring and Upgradeing code from "Foreman", by "Choumiko"
 
 local Event = require('__stdlib__/stdlib/event/event')
-local Gui = require('__stdlib__/stdlib/event/gui')
-local Player = require('__stdlib__/stdlib/event/player')
 local Area = require('__stdlib__/stdlib/area/area')
-local Position = require('__stdlib__/stdlib/area/position')
 local Inventory = require('__stdlib__/stdlib/entity/inventory')
 local Entity = require('__stdlib__/stdlib/entity/entity')
 
-local table = require('__stdlib__/stdlib/utils/table')
 local lib = require('__PickerAtheneum__/utils/lib')
 
--- Creates the BP tools frame
-local function get_or_create_blueprint_gui(player)
-    local flow = lib.get_or_create_main_left_flow(player, 'picker')
-
-    local bpframe = flow['picker_bp_tools']
-    if not bpframe then
-        bpframe = flow.add {type = 'frame', name = 'picker_bp_tools', direction = 'horizontal', style = 'picker_frame'}
-
-        local bptable = bpframe.add {type = 'table', name = 'picker_bp_tools_table', column_count = 4, style = 'picker_table'}
-        bptable.add {
-            type = 'sprite-button',
-            name = 'picker_bp_tools_mirror',
-            sprite = 'picker-mirror-sprite',
-            style = 'picker_buttons',
-            tooltip = {'blueprinter.btn-mirror'}
-        }
-        bptable.add {
-            type = 'choose-elem-button',
-            name = 'picker_bp_tools_from',
-            elem_type = 'entity',
-            style = 'picker_buttons',
-            tooltip = {'blueprinter.btn-from'}
-        }
-        bptable.add {type = 'choose-elem-button', name = 'picker_bp_tools_to', elem_type = 'entity', style = 'picker_buttons', tooltip = {'blueprinter.btn-to'}}
-        bptable.add {
-            type = 'sprite-button',
-            name = 'picker_bp_tools_update',
-            sprite = 'picker-upgrade-sprite',
-            style = 'picker_buttons',
-            tooltip = {'blueprinter.btn-upgrade'}
-        }
-    end
-    return bpframe
-end
-
-local function show_bp_tools(event)
-    local player, pdata = Player.get(event.player_index)
-    local bp = Inventory.get_blueprint(player.cursor_stack)
-    local frame = get_or_create_blueprint_gui(player)
-    if bp and not Inventory.is_named_bp(bp, 'Belt brush') then
-        frame.visible = true
-        frame['picker_bp_tools_table']['picker_bp_tools_to'].elem_value = nil
-        frame['picker_bp_tools_table']['picker_bp_tools_from'].elem_value = nil
-    else
-        frame.visible = false
-    end
-    pdata.last_put = nil
-end
-Event.register(defines.events.on_player_cursor_stack_changed, show_bp_tools)
-
-local function blueprint_single_entity(player, pdata, entity, target_name, area)
+local function blueprint_single_entity(player, entity, target_name, area)
     if area:size() > 0 then
         local bp = lib.get_planner(player, 'picker-blueprint-tool', 'Pipette Blueprint')
         if bp then
@@ -88,14 +34,8 @@ local function blueprint_single_entity(player, pdata, entity, target_name, area)
                     break
                 end
             end
-            pdata.last_put = nil
             if not found then
                 return bp.clear() and nil
-            end
-            if bp.is_blueprint_setup() then
-                pdata.new_simple = true
-                local frame = get_or_create_blueprint_gui(player)
-                frame['picker_bp_tools_table']['picker_bp_tools_from'].elem_value = entity.name
             end
         else
             player.print({'picker.msg-cant-insert-blueprint'})
@@ -105,7 +45,7 @@ end
 
 -- Make Simple Blueprint --Makes a simple blueprint of the selected entity, including recipes/modules
 local function make_simple_blueprint(event)
-    local player, pdata = Player.get(event.player_index)
+    local player = game.get_player(event.player_index)
     if player.controller_type ~= defines.controllers.ghost and player.mod_settings['picker-simple-blueprint'].value then
         if player.selected and not (player.selected.type == 'resource' or player.selected.has_flag('not-blueprintable')) then
             if not (player.cursor_stack.valid_for_read) then
@@ -115,7 +55,7 @@ local function make_simple_blueprint(event)
                         return
                     else
                         local area = Area(entity.bounding_box)
-                        blueprint_single_entity(player, pdata, entity, player.selected.name, area)
+                        blueprint_single_entity(player, entity, player.selected.name, area)
                     end
                 end
             end
@@ -123,74 +63,6 @@ local function make_simple_blueprint(event)
     end
 end
 Event.register('picker-make-ghost', make_simple_blueprint)
-
--- Update BP Entities
-local function update_blueprint(event)
-    local player = game.players[event.player_index]
-    local stack = Inventory.get_blueprint(player.cursor_stack, true)
-    if stack then
-        local from = event.element.parent['picker_bp_tools_from'].elem_value
-        local to = event.element.parent['picker_bp_tools_to'].elem_value
-        if from and to then
-            if game.entity_prototypes[from].fast_replaceable_group == game.entity_prototypes[to].fast_replaceable_group then
-                local bp_entities = stack.get_blueprint_entities()
-                for _, entity in pairs(bp_entities) do
-                    if entity.name == from then
-                        entity.name = to
-                    end
-                end
-
-                stack.set_blueprint_entities(bp_entities)
-            else
-                player.print({'blueprinter.selections-not-fast-replaceable', {'entity-name.' .. from}, {'entity-name.' .. to}})
-            end
-        else
-            player.print({'blueprinter.no-from-or-to'})
-        end
-    end
-end
-Gui.on_click('picker_bp_tools_update', update_blueprint)
-
---! Quick Pick Blueprint -- Makes a quick blueprint from the entity selector gui TODO not needed in .17?
-local function create_quick_pick_blueprint(event)
-    local player = game.players[event.player_index]
-    local stack = Inventory.get_blueprint(player.cursor_stack)
-    if event.element.elem_value and stack and (not stack.is_blueprint_setup() or Inventory.is_named_bp(stack, 'Pipette Blueprint')) then
-        local _valid_entities = function(v)
-            if v.place_result then
-                return v.place_result.name == event.element.elem_value and not v.place_result.has_flag('not-blueprintable')
-            end
-        end
-        local item = table.find(game.item_prototypes, _valid_entities)
-        if item then
-            local _, w, h
-            if item.place_result.collision_box then
-                _, w, h = Area.size(Area.round(item.place_result.collision_box))
-            end
-            local x = w and w % 2 == 0 and -0.5 or 0
-            local y = h and h % 2 == 0 and -0.5 or 0
-            local entities = {
-                {
-                    entity_number = 1,
-                    name = event.element.elem_value,
-                    direction = defines.direction.north,
-                    position = Position.translate({x, y}, defines.direction.northeast, item.place_result.building_grid_bit_shift)
-                }
-            }
-            lib.get_planner(player, 'picker-blueprint-tool', 'Pipette Blueprint')
-            local ok =
-                pcall(
-                function()
-                    stack.set_blueprint_entities(entities)
-                end
-            )
-            if ok then
-                stack.label = 'Pipette Blueprint'
-            end
-        end
-    end
-end
-Gui.on_elem_changed('picker_bp_tools_from', create_quick_pick_blueprint)
 
 --(( Blueprint Book tools ))--
 local function add_empty_bp_to_book(event)
@@ -235,13 +107,3 @@ local function clean_empty_bps_in_book(event)
     end
 end
 Event.register('picker-clean-empty-bps-in-book', clean_empty_bps_in_book) --))
-
-local function summon_blueprint(event)
-    local player = game.players[event.player_index]
-    local stack = player.cursor_stack
-    if not stack.valid_for_read or stack.is_deconstruction_item or (stack.is_blueprint and stack.is_blueprint_setup()) then
-        local item = lib.find_item_in_inventory('blueprint', player.get_main_inventory(), {is_blueprint_not_setup = true}) or 'blueprint'
-        return lib.set_or_swap_item(player, stack, item)
-    end
-end
-Event.register('picker-summon-empty-blueprint', summon_blueprint)

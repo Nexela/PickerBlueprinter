@@ -6,6 +6,35 @@ local Position = require('__stdlib__/stdlib/area/position')
 local Inventory = require('__stdlib__/stdlib/entity/inventory')
 local table = require('__stdlib__/stdlib/utils/table')
 local interface = require('__stdlib__/stdlib/scripts/interface')
+local mod_gui = require('mod-gui')
+
+local function get_or_create_mirror_button(flow)
+    local button = flow['picker_mirror_button']
+    if not button then
+        button =
+            flow.add {
+            type = 'sprite-button',
+            name = 'picker_mirror_button',
+            sprite = 'picker-mirror-sprite',
+            style = 'picker_buttons',
+            tooltip = {'blueprinter.btn-mirror'}
+        }
+    end
+    return button
+end
+
+local function show_bp_tools(event)
+    local player = game.get_player(event.player_index)
+    local bp = Inventory.get_blueprint(player.cursor_stack)
+    local flow = mod_gui.get_button_flow(player)
+    local button = get_or_create_mirror_button(flow)
+    if bp and not Inventory.is_named_bp(bp, 'Belt brush') then
+        button.visible = true
+    else
+        button.visible = false
+    end
+end
+Event.register(defines.events.on_player_cursor_stack_changed, show_bp_tools)
 
 local swap_sides = {
     ['left'] = 'right',
@@ -72,8 +101,8 @@ local function get_mirrored_blueprint(blueprint)
                 ent.direction = (others - ent.direction) % 8
                 ent.input_priority = ent.input_priority and swap_sides[ent.input_priority]
                 ent.output_priority = ent.output_priority and swap_sides[ent.output_priority]
-            elseif entType == 'pipe-to-ground'  then
-                if  ent.name:find('%-clamped%-l$') then
+            elseif entType == 'pipe-to-ground' then
+                if ent.name:find('%-clamped%-l$') then
                     ent.direction = (others - ent.direction + 2) % 8
                 end
             else
