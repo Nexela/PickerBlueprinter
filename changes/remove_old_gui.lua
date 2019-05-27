@@ -1,5 +1,5 @@
-return function(event)
-    if event.mod_changes and event.mod_changes['PickerBlueprinter'] then
+return {
+    ['1.0.4'] = function()
         for _, player in pairs(game.players) do
             local flow = player.gui.left.picker_main_flow
             if flow then
@@ -10,4 +10,4 @@ return function(event)
             end
         end
     end
-end
+}
