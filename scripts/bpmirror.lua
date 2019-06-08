@@ -161,6 +161,6 @@ local function mirror_blueprint(event)
         end
     end
 end
-Gui.on_click('picker_bp_tools_mirror', mirror_blueprint)
+Gui.on_click('picker_mirror_button', mirror_blueprint)
 Event.register('picker-mirror-blueprint', mirror_blueprint)
 Event.register(Event.generate_event_name('on_blueprint_mirrored'), mirror_blueprint)
