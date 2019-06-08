@@ -1,8 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.6
+Date: ??????
+  Bugfixes:
+    - Made mirror button do work.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.5
 Date: ??????
   Bugfixes:
-    - Changelog works correctly thanks to EnigmaticAussie
+    - Changelog works correctly thanks to EnigmaticAussie.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: ??????
