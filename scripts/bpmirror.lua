@@ -104,6 +104,8 @@ local function get_mirrored_blueprint(blueprint)
             elseif entType == 'pipe-to-ground' then
                 if ent.name:find('%-clamped%-l$') then
                     ent.direction = (others - ent.direction + 2) % 8
+                else
+                    ent.direction = (others - ent.direction) % 8
                 end
             else
                 ent.direction = (others - ent.direction) % 8
