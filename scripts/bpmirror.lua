@@ -1,5 +1,10 @@
--- Mirroring and Upgradeing code from "Foreman", by "Choumiko"
-
+--[[
+	"name":"Foreman",
+    "title":"Foreman",
+	"author":"Choumiko (originally: JamesOFarrell)",
+	"homepage": "https://forums.factorio.com/viewtopic.php?f=92&t=14243",
+	"description":"A tool for manipulating blueprints"
+--]]
 local Event = require('__stdlib__/stdlib/event/event')
 local Gui = require('__stdlib__/stdlib/event/gui')
 local Position = require('__stdlib__/stdlib/area/position')
@@ -45,6 +50,7 @@ local swap_sides = {
     ['output'] = 'input'
 }
 
+Event.generate_event_name('on_blueprint_mirrored')
 function interface.on_blueprint_mirrored()
     return Event.get_event_name('on_blueprint_mirrored')
 end
@@ -154,15 +160,12 @@ local function mirror_blueprint(event)
         local mirrored = get_mirrored_blueprint(blueprint)
         blueprint.set_blueprint_entities(mirrored.entities)
         blueprint.set_blueprint_tiles(mirrored.tiles)
-        if blueprint.label and not event.corner then
-            if blueprint.label:find('Belt Brush Corner Left') then
-                blueprint.label = 'Belt Brush Corner Right ' .. blueprint.label:match('%d+')
-            elseif blueprint.label:find('Belt Brush Corner Right') then
-                blueprint.label = 'Belt Brush Corner Left ' .. blueprint.label:match('%d+')
-            end
-        end
+        local new_event = {
+            player_index = player.index,
+            blueprint = blueprint
+        }
+        Event.raise_event(Event.generate_event_name('on_blueprint_mirrored'), new_event)
     end
 end
 Gui.on_click('picker_mirror_button', mirror_blueprint)
 Event.register('picker-mirror-blueprint', mirror_blueprint)
-Event.register(Event.generate_event_name('on_blueprint_mirrored'), mirror_blueprint)
