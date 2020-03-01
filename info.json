@@ -9,7 +9,7 @@
     "homepage": "",
     "description": "Makes working with blueprints and deconstruction planners easier.",
     "package": {
-      "ignore": ["makefile"],
+      "ignore": [],
       "scripts": {
         "datestamp": "../PickerAtheneum/.publish/datestamp.sh",
         "prepackage": "../PickerAtheneum/.publish/prepackage.sh",
