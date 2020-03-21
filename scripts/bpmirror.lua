@@ -21,7 +21,7 @@ local function get_or_create_mirror_button(flow)
             type = 'sprite-button',
             name = 'picker_mirror_button',
             sprite = 'picker-mirror-sprite',
-            style = 'picker_buttons',
+            style = mod_gui.button_style,
             tooltip = {'blueprinter.btn-mirror'}
         }
     end
