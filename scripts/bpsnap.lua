@@ -8,63 +8,27 @@
 --]]
 local Event = require('__stdlib__/stdlib/event/event')
 local Inventory = require('__stdlib__/stdlib/entity/inventory')
+local Position = require('__stdlib__/stdlib/area/position')
+local Area = require('__stdlib__/stdlib/area/area')
 
 local min, max = math.min, math.max
 local table = require('__stdlib__/stdlib/utils/table')
 
-local Snap = {
-    events = {
-        ['picker-bp-snap-n'] = {nil, 1},
-        ['picker-bp-snap-s'] = {nil, 0},
-        ['picker-bp-snap-w'] = {1, nil},
-        ['picker-bp-snap-e'] = {0, nil},
-        ['picker-bp-snap-center'] = {0.5, 0.5},
-        ['picker-bp-snap-nw'] = {1, 1},
-        ['picker-bp-snap-ne'] = {0, 1},
-        ['picker-bp-snap-sw'] = {1, 0},
-        ['picker-bp-snap-se'] = {0, 0}
-    },
-    alignment_overrides = {
-        ['straight-rail'] = 2,
-        ['curved-rail'] = 2,
-        ['train-stop'] = 2
-    },
-    rotations = {
-        [defines.direction.north] = {1, 2, 3, 4},
-        [defines.direction.northeast] = {3, 2, 1, 4},
-        [defines.direction.east] = {4, 1, 2, 3},
-        [defines.direction.southeast] = {2, 1, 4, 3},
-        [defines.direction.south] = {3, 4, 1, 2},
-        [defines.direction.southwest] = {1, 4, 3, 2},
-        [defines.direction.west] = {2, 3, 4, 1},
-        [defines.direction.northwest] = {4, 3, 2, 1}
+local Snap = {}
+
+local events = {
+        ['picker-bp-snap-n'] = {-1, 0},
+        ['picker-bp-snap-s'] = {1, 0},
+        ['picker-bp-snap-w'] = {0, -1},
+        ['picker-bp-snap-e'] = {0, 1},
+        ['picker-bp-snap-center'] = {0, 0},
+        ['picker-bp-snap-nw'] = {-1, -1},
+        ['picker-bp-snap-ne'] = {-1, 1},
+        ['picker-bp-snap-sw'] = {1, -1},
+        ['picker-bp-snap-se'] = {1, 1}
     }
-}
 
-function Snap.on_event(event)
-    local player = game.players[event.player_index]
 
-    local bp = Inventory.get_blueprint(player.cursor_stack, true)
-
-    if bp then
-        local player_settings = player.mod_settings
-
-        local center = (player_settings['picker-bp-snap-cardinal-center'].value and 0.5) or nil
-        local xdir, ydir = table.unpack(Snap.events[event.input_name])
-        if xdir == nil then
-            xdir = center
-        elseif player_settings['picker-bp-snap-horizontal-invert'].value then
-            xdir = 1 - xdir
-        end
-        if ydir == nil then
-            ydir = center
-        elseif player_settings['picker-bp-snap-vertical-invert'].value then
-            ydir = 1 - ydir
-        end
-        return Snap.align_blueprint(bp, xdir, ydir)
-    end
-end
-Event.register(table.keys(Snap.events), Snap.on_event)
 
 local function update_bounds(bound, point, min_edge, max_edge)
     min_edge = point + min_edge
@@ -168,3 +132,72 @@ function Snap.align_blueprint(bp, xdir, ydir)
     local yoff = calculate_offset(ydir, bounds.y, align)
     return Snap.offset_blueprint(bp, xoff, yoff)
 end
+
+local function get_bounds(entities, tiles)
+    local bounds = Area()
+    local shift = 0
+
+    local function outer_most(box)
+        bounds.left_top.x = min(bounds.left_top.x, box.left_top.x)
+            bounds.left_top.y  = min(bounds.left_top.y, box.left_top.y)
+            bounds.right_bottom.x  = max(bounds.right_bottom.x, box.right_bottom.x)
+            bounds.right_bottom.y = max(bounds.right_bottom.y, box.right_bottom.y)
+    end
+
+
+    for _, entity in pairs(entities) do
+        local proto = game.entity_prototypes[entity.name]
+        local box = proto.selection_box
+
+        if proto.building_grid_bit_shift > 0 then
+            shift = 1
+        end
+
+        if box then
+            outer_most(Area(box))
+
+        end
+    end
+
+    for _, tile in pairs(tiles) do
+        outer_most(Position(tile.position):to_tile_area())
+    end
+    return bounds, shift
+end
+
+local function align_blueprint(entities, tiles, vector)
+    local bounds, shift = get_bounds(entities, tiles)
+    return bounds, shift
+end
+
+-- local function get_shift(entities)
+--     for _, entity in pairs(entities) do
+--         local proto = game.entity_prototypes[entity.name]
+--         if proto and proto.building_grid_bit_shift > 0 then
+--             return 1
+--         end
+--     end
+--     return 0
+-- end
+
+local function on_snap(event)
+    local player = game.get_player(event.player_index)
+    local bp = Inventory.get_blueprint(player.cursor_stack, true)
+
+    if bp then
+        local player_settings = player.mod_settings
+
+        local entities = bp.get_blueprint_entities() or {}
+        local tiles = bp.get_blueprint_tiles() or {}
+
+        local x_dir = player_settings['picker-bp-snap-horizontal-invert'].value and -1 or 1
+        local y_dir = player_settings['picker-bp-snap-vertical-invert'].value and -1 or 1
+
+        local vector = Position(events[event.input_name]) * {x_dir, y_dir}
+        -- local x, y = table.unpack(events[event.input_name])
+        -- x, y = x * invert_x, y * invert_y
+
+        align_blueprint(entities, tiles, vector)
+    end
+end
+Event.register(table.keys(events), on_snap)
