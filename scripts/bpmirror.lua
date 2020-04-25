@@ -50,6 +50,13 @@ local swap_sides = {
     ['output'] = 'input'
 }
 
+local rolling_stock = {
+    ['locomotive'] = true,
+    ['cargo-wagon'] = true,
+    ['fluid-wagon'] = true,
+    ['artillery-wagon'] = true
+}
+
 Event.generate_event_name('on_blueprint_mirrored')
 function interface.on_blueprint_mirrored()
     return Event.get_event_name('on_blueprint_mirrored')
@@ -113,6 +120,9 @@ local function get_mirrored_blueprint(blueprint)
                 else
                     ent.direction = (others - ent.direction) % 8
                 end
+            elseif rolling_stock[entType] then
+                ent.orientation = (ent.orientation + 0.5) % 1
+
             else
                 ent.direction = (others - ent.direction) % 8
             end
