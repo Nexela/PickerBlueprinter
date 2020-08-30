@@ -4,7 +4,7 @@ local table = require('__stdlib__/stdlib/utils/table')
 local function summon_tree_deconstruction_planner(event)
     local player = game.players[event.player_index]
     local stack = player.cursor_stack
-    if player.clean_cursor() and stack.set_stack('deconstruction-planner') then
+    if player.clear_cursor() and stack.set_stack('deconstruction-planner') then
         stack.trees_and_rocks_only = true
     end
 end

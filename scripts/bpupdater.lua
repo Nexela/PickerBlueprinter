@@ -74,7 +74,7 @@ function Updater.clone(event)
         end
 
         -- Create replacer tool, drop orignal back into inventory
-        if player.clean_cursor() then
+        if player.clear_cursor() then
             pdata.updater = updater
             player.cursor_stack.set_stack(CLONED_BLUEPRINT)
             if updater.label then
@@ -149,7 +149,7 @@ end
 function Updater.on_player_configured_blueprint(event)
     local player, pdata = Player.get(event.player_index)
     if pdata.updater and pdata.updater.status == AWAITING_BP then
-        if not player.clean_cursor() then
+        if not player.clear_cursor() then
             -- rarest of rare edge cases
             player.print({'blueprint-updater.error_cannot_set_stack', {'item-name.'..pdata.updater.name}})
             local ground = player.surface.create_entity{name = 'item-on-ground', position = player.position, stack = {name = pdata.updater.name, amount = 1}}

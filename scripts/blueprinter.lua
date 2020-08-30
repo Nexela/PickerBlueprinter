@@ -50,7 +50,7 @@ local function make_simple_blueprint(event)
         if player.selected and not (player.selected.type == 'resource' or player.selected.has_flag('not-blueprintable')) then
             if not (player.cursor_stack.valid_for_read) then
                 local entity = player.selected
-                if player.clean_cursor() then
+                if player.clear_cursor() then
                     if entity.force == player.force and Entity.damaged(entity) and lib.get_planner(player, 'repair-tool') then
                         return
                     else
