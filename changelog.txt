@@ -3,6 +3,7 @@ Version: 1.1.5
 Date: ????
   Changes:
     - clean_cursor renamed to clear_cursor.
+    - Clean up prototype loading.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.4
 Date: 2020-08-23
