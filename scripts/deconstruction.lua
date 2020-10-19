@@ -72,7 +72,7 @@ local function mark_for_deconstruction(event)
         elseif not stack.valid_for_read then
             local force = player.force
             if force == selected.force then
-                if selected.to_be_deconstructed(force) then
+                if selected.to_be_deconstructed() then
                     selected.cancel_deconstruction(force, player)
                 else
                     selected.order_deconstruction(force, player)

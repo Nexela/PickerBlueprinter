@@ -13,5 +13,16 @@
         "contact": "https://github.com/dewiniaid/BlueprintExtensions",
         "homepage": "https://github.com/dewiniaid/BlueprintExensions",
         "description": "Adds tools for updating and placing blueprints."
+    },
+    {
+        "name": "BotPrioritizer",
+        "title": "Bot Prioritizer",
+        "author": "ChrislyBear",
+        "description": [
+            "A simple selection tool. With it you can select areas with work orders for ",
+            "robots (constructions, deconstructions, upgrades) to try to give your personal robots priority ",
+            "over your base robots by reissuing the orders.\n",
+            "Because who likes to wait until the base robots finally arrive?!"
+        ]
     }
 ]

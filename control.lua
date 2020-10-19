@@ -7,6 +7,7 @@ require('scripts/deconstruction')
 require('scripts/bpmirror')
 require('scripts/bpupdater')
 require('scripts/bpsnap')
+require('scripts/bpprioritizer')
 
 require('__stdlib__/stdlib/event/changes').register('mod_versions', 'changes/remove_old_gui')
 remote.add_interface(script.mod_name, require('__stdlib__/stdlib/scripts/interface'))
