@@ -68,13 +68,21 @@ Event.register('picker-make-ghost', make_simple_blueprint)
 local function add_empty_bp_to_book(event)
     local player = game.players[event.player_index]
     local stack = player.cursor_stack
-    if stack.valid_for_read and stack.is_blueprint_book then
+    if (stack.valid_for_read and stack.is_blueprint_book) then
         local inv = stack.get_inventory(defines.inventory.item_main)
         if inv then
-            local slot, idx = inv.find_empty_stack('blueprint')
-            if slot and idx and slot.set_stack('blueprint') then
-                stack.active_index = idx
-                -- Cycling blueprints in books raises cursor changed event, but we can't emulate that anymore.
+            local index = 0
+            for i = #inv, 1, -1 do
+                if inv[i].valid_for_read and not inv[i].is_blueprint_setup() then
+                    index = i
+                    break
+                end
+            end
+            if index > 0 then
+                stack.active_index = index
+            else
+                inv.insert('blueprint')
+                stack.active_index = #inv
             end
         end
     end

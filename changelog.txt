@@ -6,6 +6,8 @@ Date: ????
   Changes:
     - clean_cursor renamed to clear_cursor.
     - Clean up prototype loading.
+  Bugfixes:
+    - Fix blueprint book cleaner.
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.4
 Date: 2020-08-23
