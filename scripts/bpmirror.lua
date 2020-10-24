@@ -13,7 +13,8 @@ local table = require('__stdlib__/stdlib/utils/table')
 local interface = require('__stdlib__/stdlib/scripts/interface')
 local mod_gui = require('mod-gui')
 
-local function get_or_create_mirror_button(flow)
+local function get_or_create_mirror_button(player)
+    local flow = mod_gui.get_button_flow(player)
     local button = flow['picker_mirror_button']
     if not button then
         button =
@@ -30,9 +31,8 @@ end
 
 local function show_bp_tools(event)
     local player = game.get_player(event.player_index)
-    local bp = Inventory.get_blueprint(player.cursor_stack)
-    local flow = mod_gui.get_button_flow(player)
-    local button = get_or_create_mirror_button(flow)
+    local bp = Inventory.get_blueprint(player.cursor_stack, true)
+    local button = get_or_create_mirror_button(player)
     if bp and not Inventory.is_named_bp(bp, 'Belt brush') then
         button.visible = true
     else
