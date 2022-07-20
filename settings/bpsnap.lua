@@ -1,4 +1,4 @@
-data:extend{
+data:extend {
     {
         type = 'bool-setting',
         name = 'picker-bp-snap',
@@ -8,7 +8,7 @@ data:extend{
     }
 }
 
-data:extend{
+data:extend {
     {
         type = 'bool-setting',
         name = 'picker-bp-snap-cardinal-center',

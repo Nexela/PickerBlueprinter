@@ -18,12 +18,12 @@ local function get_or_create_mirror_button(player)
     local button = flow['picker_mirror_button']
     if not button then
         button =
-            flow.add {
+        flow.add {
             type = 'sprite-button',
             name = 'picker_mirror_button',
             sprite = 'picker-mirror-sprite',
             style = mod_gui.button_style,
-            tooltip = {'blueprinter.btn-mirror'}
+            tooltip = { 'blueprinter.btn-mirror' }
         }
     end
     return button
@@ -66,14 +66,14 @@ local function get_mirrored_blueprint(blueprint)
     local curves, others, stops, signals, tanks = 9, 0, 4, 4, 2
 
     local smartTrains = remote.interfaces.st and remote.interfaces.st.getProxyPositions
-    local smartStops = {['smart-train-stop-proxy'] = {}, ['smart-train-stop-proxy-cargo'] = {}}
+    local smartStops = { ['smart-train-stop-proxy'] = {}, ['smart-train-stop-proxy-cargo'] = {} }
     local smartSignal, smartCargo = {}, {}
 
     local proxyKeys = function(trainStop)
         local proxies = remote.call('st', 'getProxyPositions', trainStop)
         local signal = proxies.signalProxy.x .. ':' .. proxies.signalProxy.y
         local cargo = proxies.cargo.x .. ':' .. proxies.cargo.y
-        return {signal = signal, cargo = cargo}
+        return { signal = signal, cargo = cargo }
     end
 
     local entities = blueprint.get_blueprint_entities()
@@ -90,8 +90,8 @@ local function get_mirrored_blueprint(blueprint)
             elseif entType == 'train-stop' then
                 if ent.name == 'smart-train-stop' and smartTrains then
                     local proxies = proxyKeys(ent)
-                    smartStops['smart-train-stop-proxy'][proxies.signal] = {old = {direction = ent.direction, position = Position.copy(ent.position)}}
-                    smartStops['smart-train-stop-proxy-cargo'][proxies.cargo] = {old = {direction = ent.direction, position = Position.copy(ent.position)}}
+                    smartStops['smart-train-stop-proxy'][proxies.signal] = { old = { direction = ent.direction, position = Position.copy(ent.position) } }
+                    smartStops['smart-train-stop-proxy-cargo'][proxies.cargo] = { old = { direction = ent.direction, position = Position.copy(ent.position) } }
                     ent.direction = (stops - ent.direction) % 8
                     smartStops['smart-train-stop-proxy'][proxies.signal].new = ent
                     smartStops['smart-train-stop-proxy-cargo'][proxies.cargo].new = ent
@@ -101,12 +101,12 @@ local function get_mirrored_blueprint(blueprint)
             elseif entType == 'lamp' then
                 if ent.name == 'smart-train-stop-proxy' then
                     ent.direction = 0
-                    table.insert(smartSignal, {entity = {name = ent.name, position = Position.copy(ent.position)}, i = i})
+                    table.insert(smartSignal, { entity = { name = ent.name, position = Position.copy(ent.position) }, i = i })
                 end
             elseif entType == 'constant-combinator' then
                 if ent.name == 'smart-train-stop-proxy-cargo' then
                     ent.direction = 0
-                    table.insert(smartCargo, {entity = {name = ent.name, position = Position.copy(ent.position)}, i = i})
+                    table.insert(smartCargo, { entity = { name = ent.name, position = Position.copy(ent.position) }, i = i })
                 end
             elseif entType == 'storage-tank' then
                 ent.direction = (tanks + ent.direction) % 8
@@ -160,7 +160,7 @@ local function get_mirrored_blueprint(blueprint)
             tile.position.x = -1 * tile.position.x
         end
     end
-    return {entities = entities, tiles = tiles}
+    return { entities = entities, tiles = tiles }
 end
 
 local function mirror_blueprint(event)

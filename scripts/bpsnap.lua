@@ -14,15 +14,15 @@ local table = require('__stdlib__/stdlib/utils/table')
 
 local Snap = {
     events = {
-        ['picker-bp-snap-n'] = {nil, 1},
-        ['picker-bp-snap-s'] = {nil, 0},
-        ['picker-bp-snap-w'] = {1, nil},
-        ['picker-bp-snap-e'] = {0, nil},
-        ['picker-bp-snap-center'] = {0.5, 0.5},
-        ['picker-bp-snap-nw'] = {1, 1},
-        ['picker-bp-snap-ne'] = {0, 1},
-        ['picker-bp-snap-sw'] = {1, 0},
-        ['picker-bp-snap-se'] = {0, 0}
+        ['picker-bp-snap-n'] = { nil, 1 },
+        ['picker-bp-snap-s'] = { nil, 0 },
+        ['picker-bp-snap-w'] = { 1, nil },
+        ['picker-bp-snap-e'] = { 0, nil },
+        ['picker-bp-snap-center'] = { 0.5, 0.5 },
+        ['picker-bp-snap-nw'] = { 1, 1 },
+        ['picker-bp-snap-ne'] = { 0, 1 },
+        ['picker-bp-snap-sw'] = { 1, 0 },
+        ['picker-bp-snap-se'] = { 0, 0 }
     },
     alignment_overrides = {
         ['straight-rail'] = 2,
@@ -30,14 +30,14 @@ local Snap = {
         ['train-stop'] = 2
     },
     rotations = {
-        [defines.direction.north] = {1, 2, 3, 4},
-        [defines.direction.northeast] = {3, 2, 1, 4},
-        [defines.direction.east] = {4, 1, 2, 3},
-        [defines.direction.southeast] = {2, 1, 4, 3},
-        [defines.direction.south] = {3, 4, 1, 2},
-        [defines.direction.southwest] = {1, 4, 3, 2},
-        [defines.direction.west] = {2, 3, 4, 1},
-        [defines.direction.northwest] = {4, 3, 2, 1}
+        [defines.direction.north] = { 1, 2, 3, 4 },
+        [defines.direction.northeast] = { 3, 2, 1, 4 },
+        [defines.direction.east] = { 4, 1, 2, 3 },
+        [defines.direction.southeast] = { 2, 1, 4, 3 },
+        [defines.direction.south] = { 3, 4, 1, 2 },
+        [defines.direction.southwest] = { 1, 4, 3, 2 },
+        [defines.direction.west] = { 2, 3, 4, 1 },
+        [defines.direction.northwest] = { 4, 3, 2, 1 }
     }
 }
 
@@ -50,18 +50,18 @@ function Snap.on_event(event)
         local player_settings = player.mod_settings
 
         local center = (player_settings['picker-bp-snap-cardinal-center'].value and 0.5) or nil
-        local xdir, ydir = table.unpack(Snap.events[event.input_name])
-        if xdir == nil then
-            xdir = center
+        local dir_x, dir_y = table.unpack(Snap.events[event.input_name])
+        if dir_x == nil then
+            dir_x = center
         elseif player_settings['picker-bp-snap-horizontal-invert'].value then
-            xdir = 1 - xdir
+            dir_x = 1 - dir_x
         end
-        if ydir == nil then
-            ydir = center
+        if dir_y == nil then
+            dir_y = center
         elseif player_settings['picker-bp-snap-vertical-invert'].value then
-            ydir = 1 - ydir
+            dir_y = 1 - dir_y
         end
-        return Snap.align_blueprint(bp, xdir, ydir)
+        return Snap.align_blueprint(bp, dir_x, dir_y)
     end
 end
 Event.register(table.keys(Snap.events), Snap.on_event)
@@ -86,8 +86,8 @@ function Snap.blueprint_bounds(bp)
     local prototypes = game.entity_prototypes
 
     local bounds = {
-        x = {min_edge = nil, min = nil, mid = nil, max_edge = nil, max = nil},
-        y = {min_edge = nil, min = nil, mid = nil, max_edge = nil, max = nil}
+        x = { min_edge = nil, min = nil, mid = nil, max_edge = nil, max = nil },
+        y = { min_edge = nil, min = nil, mid = nil, max_edge = nil, max = nil }
     }
     local align = 1
 
@@ -127,27 +127,27 @@ function Snap.blueprint_bounds(bp)
     return bounds, align
 end
 
-local function offset(t, xoff, yoff)
+local function offset(t, x_offset, y_offset)
     for _, v in pairs(t) do
         if not v.position then
             return nil
         end
 
-        v.position.x = v.position.x + xoff
-        v.position.y = v.position.y + yoff
+        v.position.x = v.position.x + x_offset
+        v.position.y = v.position.y + y_offset
     end
     return t
 end
 
-function Snap.offset_blueprint(bp, xoff, yoff)
+function Snap.offset_blueprint(bp, x_offset, y_offset)
     local entities = bp.get_blueprint_entities()
     local tiles = bp.get_blueprint_tiles()
 
     if entities then
-        bp.set_blueprint_entities(offset(entities, xoff, yoff))
+        bp.set_blueprint_entities(offset(entities, x_offset, y_offset))
     end
     if tiles then
-        bp.set_blueprint_tiles(offset(tiles, xoff, yoff))
+        bp.set_blueprint_tiles(offset(tiles, x_offset, y_offset))
     end
 end
 
@@ -162,9 +162,9 @@ local function calculate_offset(dir, bound, align)
     return o
 end
 
-function Snap.align_blueprint(bp, xdir, ydir)
+function Snap.align_blueprint(bp, x_dir, y_dir)
     local bounds, align = Snap.blueprint_bounds(bp)
-    local xoff = calculate_offset(xdir, bounds.x, align)
-    local yoff = calculate_offset(ydir, bounds.y, align)
-    return Snap.offset_blueprint(bp, xoff, yoff)
+    local x_offset = calculate_offset(x_dir, bounds.x, align)
+    local y_offset = calculate_offset(y_dir, bounds.y, align)
+    return Snap.offset_blueprint(bp, x_offset, y_offset)
 end

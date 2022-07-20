@@ -68,7 +68,7 @@ function Updater.clone(event)
             if rolling_stock[game.entity_prototypes[ent.name].type] then
                 updater.trains = true
                 updater.fuel = ent.items and true or false
-            elseif ent.station and ent.station ~= "" then
+            elseif ent.station and ent.station ~= '' then
                 updater.stations = true
             end
         end
@@ -99,8 +99,8 @@ function Updater.on_selected_area(event)
                 surface = player.surface,
                 force = player.force,
                 always_include_tiles = true,
-                include_station_names=pdata.updater.stations,
-                include_trains=pdata.updater.trains,
+                include_station_names = pdata.updater.stations,
+                include_trains = pdata.updater.trains,
                 area = area
             }
 
@@ -151,8 +151,12 @@ function Updater.on_player_configured_blueprint(event)
     if pdata.updater and pdata.updater.status == AWAITING_BP then
         if not player.clear_cursor() then
             -- rarest of rare edge cases
-            player.print({'blueprint-updater.error_cannot_set_stack', {'item-name.'..pdata.updater.name}})
-            local ground = player.surface.create_entity{name = 'item-on-ground', position = player.position, stack = {name = pdata.updater.name, amount = 1}}
+            player.print { 'blueprint-updater.error_cannot_set_stack', { 'item-name.' .. pdata.updater.name } }
+            local ground = player.surface.create_entity {
+                name = 'item-on-ground',
+                position = player.position,
+                stack = { name = pdata.updater.name, amount = 1 }
+            }
             ground.stack.set_stack(load_stack(pdata))
         else
             player.cursor_stack.set_stack(load_stack(pdata.updater))
@@ -162,7 +166,7 @@ function Updater.on_player_configured_blueprint(event)
 end
 
 if settings.startup['picker-tool-bp-updater'].value then
-    Event.register({evt.on_player_selected_area, evt.on_player_alt_selected_area}, Updater.on_selected_area)
+    Event.register({ evt.on_player_selected_area, evt.on_player_alt_selected_area }, Updater.on_selected_area)
     Event.register('picker-bp-update', Updater.clone)
     Event.register(evt.on_gui_opened, Updater.on_gui_opened)
     Event.register(evt.on_player_configured_blueprint, Updater.on_player_configured_blueprint)

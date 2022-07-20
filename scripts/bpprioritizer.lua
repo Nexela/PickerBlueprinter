@@ -1,8 +1,8 @@
 local Event = require('__stdlib__/stdlib/event/event')
 local key = 'picker-bp-prioritizer'
-local use_bp_prio = not script.active_mods['BotPrioritizer'] and settings["startup"][key] and settings["startup"][key].value
+local use_bp_prioritzer = not script.active_mods['BotPrioritizer'] and settings['startup'][key] and settings['startup'][key].value --[[@as boolean]]
 
-local sc = {shortcut = defines.events.on_lua_shortcut, proto_name = 'picker-bp-prioritizer-shortcut'}
+local sc = { shortcut = defines.events.on_lua_shortcut, proto_name = 'picker-bp-prioritizer-shortcut' }
 local entity_names = {
     ['entity-ghost'] = true,
     ['tile-ghost'] = true,
@@ -22,14 +22,14 @@ local function bp_prioritizer(event)
     local force = player.force
     local surface = player.surface
 
-    local entities = surface.find_entities_filtered{position = player.position, radius = radius, force = force}
+    local entities = surface.find_entities_filtered { position = player.position, radius = radius, force = force }
     for _, entity in ipairs(entities) do
         if entity_names[entity.name] then
-            if entity.clone({position = entity.position, force = force}) then
+            if entity.clone { position = entity.position, force = force } then
                 entity.destroy()
             end
         elseif entity.name == 'item-request-proxy' then
-            if surface.create_entity{
+            if surface.create_entity {
                 name = entity.name,
                 target = entity.proxy_target,
                 position = entity.position,
@@ -45,10 +45,10 @@ local function bp_prioritizer(event)
             local upgrade_proto = entity.get_upgrade_target()
             if upgrade_proto then
                 entity.cancel_upgrade(force, player)
-                entity.order_upgrade({force = entity.force, target = upgrade_proto, player = player})
+                entity.order_upgrade { force = entity.force, target = upgrade_proto, player = player }
             end
         end
     end
 end
-local events = {'picker-bp-prioritizer-input', defines.events.on_lua_shortcut}
-Event.register_if(use_bp_prio, events, bp_prioritizer)
+local events = { 'picker-bp-prioritizer-input', defines.events.on_lua_shortcut }
+Event.register_if(use_bp_prioritzer, events, bp_prioritizer)

@@ -29,7 +29,7 @@ local function blueprint_single_entity(player, entity, target_name, area)
             local found = false
             for i, ent in pairs(bp.get_blueprint_entities() or {}) do
                 if ent.name == target_name then
-                    bp.set_blueprint_entities {ent}
+                    bp.set_blueprint_entities { ent }
                     found = true
                     break
                 end
@@ -38,7 +38,7 @@ local function blueprint_single_entity(player, entity, target_name, area)
                 return bp.clear() and nil
             end
         else
-            player.print({'picker.msg-cant-insert-blueprint'})
+            player.print { 'picker.msg-cant-insert-blueprint' }
         end
     end
 end
@@ -50,6 +50,7 @@ local function make_simple_blueprint(event)
         if player.selected and not (player.selected.type == 'resource' or player.selected.has_flag('not-blueprintable')) then
             if not (player.cursor_stack.valid_for_read) then
                 local entity = player.selected
+                if not entity then return end ---@todo Check this if needed, I think event only happens on selected
                 if player.clear_cursor() then
                     if entity.force == player.force and Entity.damaged(entity) and lib.get_planner(player, 'repair-tool') then
                         return
@@ -68,7 +69,7 @@ Event.register('picker-make-ghost', make_simple_blueprint)
 local function add_empty_bp_to_book(event)
     local player = game.players[event.player_index]
     local stack = player.cursor_stack
-    if (stack.valid_for_read and stack.is_blueprint_book) then
+    if (stack and stack.valid_for_read and stack.is_blueprint_book) then
         local inv = stack.get_inventory(defines.inventory.item_main)
         if inv then
             local index = 0
@@ -82,7 +83,7 @@ local function add_empty_bp_to_book(event)
                 stack.active_index = index
             else
                 inv.insert('blueprint')
-                stack.active_index = #inv
+                stack.active_index = #inv --[[@as uint]]
             end
         end
     end
@@ -97,7 +98,7 @@ end
 local function clean_empty_bps_in_book(event)
     local player = game.players[event.player_index]
     local stack = player.cursor_stack
-    if stack.valid_for_read and stack.is_blueprint_book then
+    if stack and stack.valid_for_read and stack.is_blueprint_book then
         local inv = stack.get_inventory(defines.inventory.item_main)
         if inv and not inv.is_empty() then
             local change_index = not (inv[stack.active_index].valid_for_read and inv[stack.active_index].is_blueprint_setup())

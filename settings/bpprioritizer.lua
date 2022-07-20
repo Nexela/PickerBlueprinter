@@ -1,5 +1,5 @@
 if not mods['BotPrioritizer'] then
-    data:extend{
+    data:extend {
         {
             type = 'bool-setting',
             name = 'picker-bp-prioritizer',
