@@ -1,8 +1,8 @@
 -- Shortcut with keybind
 local Data = require('__stdlib__/stdlib/data/data')
 local key = 'picker-bp-prioritizer'
-if not mods['BotPrioritizer'] and settings["startup"][key] and settings["startup"][key].value then
-    Data{
+if not mods['BotPrioritizer'] and settings['startup'][key] and settings['startup'][key].value then
+    Data {
         type = 'shortcut',
         name = 'picker-bp-prioritizer-shortcut',
         order = 'b[blueprints]-h[bot-prio]',
@@ -15,8 +15,8 @@ if not mods['BotPrioritizer'] and settings["startup"][key] and settings["startup
             size = 64,
             icon_mipmaps = 4,
             scale = 1,
-            flags = {'icon'}
+            flags = { 'icon' }
         }
     }
-    Data{type = 'custom-input', name = 'picker-bp-prioritizer-input', key_sequence = 'CONTROL + D', consuming = 'none'}
+    Data { type = 'custom-input', name = 'picker-bp-prioritizer-input', key_sequence = 'CONTROL + D', consuming = 'none' }
 end

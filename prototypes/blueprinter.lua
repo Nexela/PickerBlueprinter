@@ -25,32 +25,32 @@ Data {
     type = 'custom-input',
     name = 'picker-bp-snap-e',
     key_sequence = 'PAD 6',
-    enabled =  snap
+    enabled = snap
 }
 Data {
     type = 'custom-input',
     name = 'picker-bp-snap-s',
     key_sequence = 'PAD 2',
-    enabled =  snap
+    enabled = snap
 }
 Data {
     type = 'custom-input',
     name = 'picker-bp-snap-w',
     key_sequence = 'PAD 4',
-    enabled =  snap
+    enabled = snap
 }
 Data {
     type = 'custom-input',
     name = 'picker-bp-snap-nw',
     key_sequence = 'PAD 7',
-    enabled =  snap
+    enabled = snap
 }
 
 Data {
     type = 'custom-input',
     name = 'picker-bp-snap-ne',
     key_sequence = 'PAD 9',
-    enabled =  snap
+    enabled = snap
 }
 Data {
     type = 'custom-input',
@@ -84,14 +84,14 @@ if updater then
         name = 'picker-bp-updater',
         icon = '__PickerBlueprinter__/graphics/cloned-blueprint.png',
         icon_size = 32,
-        flags = {'hidden', 'only-in-cursor'},
+        flags = { 'hidden', 'only-in-cursor' },
         subgroup = 'tool',
         order = 'c[automated-construction]-a[blueprint-updater]-no-picker',
         stack_size = 1,
-        selection_color = {r = 0, g = 1, b = 0},
-        alt_selection_color = {r = 0, g = 1, b = 0},
-        selection_mode = {'blueprint'},
-        alt_selection_mode = {'blueprint'},
+        selection_color = { r = 0, g = 1, b = 0 },
+        alt_selection_color = { r = 0, g = 1, b = 0 },
+        selection_mode = { 'blueprint' },
+        alt_selection_mode = { 'blueprint' },
         selection_cursor_box_type = 'copy',
         alt_selection_cursor_box_type = 'copy',
     }
